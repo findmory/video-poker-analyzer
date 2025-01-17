@@ -88,6 +88,8 @@ Number of bets per simulation: 100,000
 Number of simulations: 2
 ```
 
+![Example Chart](./chart.png "Example Chart")
+
 ## Adding New Games
 
 To add a new game, edit `data.py` and add a new entry to the `GAMES` dictionary:
