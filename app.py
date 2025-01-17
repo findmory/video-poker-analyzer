@@ -5,10 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from data import GAMES
 
-# SETUP HERE #
-# num_bets = 100000
-# initial_balance = 0
-# num_simulations = 2
 results = []
 
 
@@ -40,7 +36,7 @@ def create_game_picker() -> str:
             print("Please enter a valid number.")
 
 
-def run_simulation(game_data, num_bets=100000):
+def run_simulation(game_data, num_bets=100000, bet_size=1):
     # Set up the payoffs and probabilities
     payoffs = np.array(game_data.payouts)
     probabilities = np.array(game_data.probabilities)
@@ -54,13 +50,13 @@ def run_simulation(game_data, num_bets=100000):
     # Run simulation
     for _ in range(num_bets):
         # Make a bet (costs 1 unit)
-        balance -= 1
+        balance -= bet_size
 
         # Determine outcome using numpy's random choice
         outcome = np.random.choice(payoffs, p=probabilities)
 
         # Add winnings to balance
-        balance += outcome
+        balance += outcome * bet_size
 
         # Update highest and lowest points
         highest_balance = max(highest_balance, balance)
@@ -77,7 +73,7 @@ def run_simulation(game_data, num_bets=100000):
     }
 
 
-def plot_simulation_results(results, expected_value, game_name):
+def plot_simulation_results(results, expected_value, game_name, bet_size):
     plt.figure(figsize=(15, 10))
 
     # Plot individual simulation paths
@@ -92,12 +88,12 @@ def plot_simulation_results(results, expected_value, game_name):
     # Customize the plot
     plt.title(
         f"Balance Over Time - Multiple Monte Carlo Simulations - {game_name}\n"
-        f"Expected value: {expected_value:.4f}"
+        f"Bet Size: ${bet_size:.2f} - Expected value: {expected_value:.4f}"
     )
     plt.xlabel("Number of Bets")
     plt.ylabel("Balance")
     plt.grid(True, alpha=0.3)
-    plt.legend()
+    # plt.legend()
 
     # Show the plot
     plt.show()
@@ -107,6 +103,7 @@ def analyze_game(
     game_name: Optional[str] = None,
     num_bets: int = 100000,
     num_simulations: int = 2,
+    bet_size: float = 1,
 ) -> None:
     """
     Analyze a game's configuration and print results.
@@ -132,8 +129,7 @@ def analyze_game(
 
     for i in range(num_simulations):
         result = run_simulation(
-            game_data,
-            num_bets=num_bets,
+            game_data, num_bets=num_bets, bet_size=bet_size
         )
         results.append(result)
         print(f"\nSimulation {i+1} Results:")
@@ -152,7 +148,7 @@ def analyze_game(
     print(f"Average Lowest Point: {avg_lowest:.2f} units")
 
     # Plot the results
-    plot_simulation_results(results, expected_value, game_name)
+    plot_simulation_results(results, expected_value, game_name, bet_size)
 
 
 def main():
@@ -164,8 +160,8 @@ def main():
     )
 
     parser.add_argument(
-        "--bets",
-        "-b",
+        "--num-bets",
+        "-n",
         type=int,
         default=100000,
         help="Number of bets to simulate (default: 100000)",
@@ -178,8 +174,17 @@ def main():
         help="Number of simulations to run (default: 2)",
     )
 
+    parser.add_argument(
+        "--bet-size",
+        "-b",
+        type=float,
+        default=1,
+        help="Size of each bet (default: 1)",
+    )
+
     args = parser.parse_args()
-    analyze_game(args.game, args.bets, args.sims)
+    print(args)
+    analyze_game(args.game, args.num_bets, args.sims, args.bet_size)
 
 
 if __name__ == "__main__":
