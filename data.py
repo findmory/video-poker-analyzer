@@ -47,4 +47,28 @@ GAMES: Dict[str, GameConfig] = {
             0.54502239,
         ],
     ),
+    "baccarrat_player_8deck": GameConfig(
+        payouts=[0, 2, 1],  # [lose, win, tie]
+        probabilities=[
+            0.458597,
+            0.446247,
+            0.095156,
+        ],
+    ),
+    "baccarrat_banker_8deck": GameConfig(
+        payouts=[1.95, 0, 1],  # [win, lose, tie]
+        probabilities=[
+            0.458597,
+            0.446247,
+            0.095156,
+        ],
+    ),
+    "baccarat_player_and_banker_8deck": GameConfig(
+        payouts=[0.975, 1, 1],  # [banker win, player wins, tie]
+        probabilities=[
+            0.458597,  # banker wins
+            0.446247,  # player wins
+            0.095156,  # tie
+        ],
+    ),
 }

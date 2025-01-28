@@ -56,7 +56,7 @@ def run_simulation(game_data, num_bets=100000, bet_size=1):
         outcome = np.random.choice(payoffs, p=probabilities)
 
         # Add winnings to balance
-        balance += outcome * bet_size
+        balance += outcome * (bet_size)
 
         # Update highest and lowest points
         highest_balance = max(highest_balance, balance)
@@ -115,7 +115,7 @@ def analyze_game(
         game_name = create_game_picker()
     # Get a specific game configuration
     game_data = get_game(game_name)
-    print(f"Payouts for {game_name}: {game_data.payouts}")
+    # print(f"Payouts for {game_name}: {game_data.payouts}")
 
     # Validate a game configuration
     is_valid = validate_game_config(game_data)
@@ -125,22 +125,34 @@ def analyze_game(
     expected_value = sum(
         p * v for p, v in zip(game_data.probabilities, game_data.payouts)
     )
-    print(f"Expected value: {expected_value:.4f}")
+    #  print(f"Expected value: {expected_value:.4f}")
+
+    highest = []
+    lowest = []
 
     for i in range(num_simulations):
+        print(i)
         result = run_simulation(
             game_data, num_bets=num_bets, bet_size=bet_size
         )
         results.append(result)
-        print(f"\nSimulation {i+1} Results:")
-        print(f"Final Balance: {result['final_balance']:.2f} units")
-        print(f"Highest Point: {result['highest_point']:.2f} units")
-        print(f"Lowest Point: {result['lowest_point']:.2f} units")
+        # print(f"\nSimulation {i+1} Results:")
+        # print(f"Final Balance: {result['final_balance']:.2f} units")
+        # print(f"Highest Point: {result['highest_point']:.2f} units")
+        # print(f"Lowest Point: {result['lowest_point']:.2f} units")
+        highest.append(result["highest_point"])
+        lowest.append(result["lowest_point"])
 
     # Calculate average results
     avg_final = sum(r["final_balance"] for r in results) / num_simulations
     avg_highest = sum(r["highest_point"] for r in results) / num_simulations
     avg_lowest = sum(r["lowest_point"] for r in results) / num_simulations
+
+    highest = max(highest)
+    lowest = min(lowest)
+    print("\n Over All Simulations:")
+    print(f"Highest Point: {highest:.2f} units")
+    print(f"Lowest Point: {lowest:.2f} units")
 
     print("\nAverage Results Over All Simulations:")
     print(f"Average Final Balance: {avg_final:.2f} units")
